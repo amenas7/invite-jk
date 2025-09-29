@@ -49,6 +49,12 @@ export class InicioComponent implements OnInit, OnDestroy, AfterViewInit{
   seconds: any;
   countdownDate: any;
 
+  _inputNombre: string = "";
+  _inputCelular: string = "";
+  _inputAsistencia: string = "";
+  _inputMensaje: string = "";
+  isLoadingForm: boolean = false;
+
   constructor(
     private cdr: ChangeDetectorRef,
     private elRef: ElementRef,
@@ -87,6 +93,152 @@ export class InicioComponent implements OnInit, OnDestroy, AfterViewInit{
 
   ngOnDestroy(): void {
     
+  }
+
+  confirmar(){
+    // Evitar múltiples clics mientras está procesando
+    if (this.isLoadingForm) {
+      return;
+    }
+
+    Swal.fire({
+      icon: 'warning',
+      title: "¿Deseas Confirmar tu invitación?",
+      showDenyButton: false,
+      showCancelButton: true,
+      confirmButtonText: "confirmar",
+      cancelButtonText: 'Aún no',
+      confirmButtonColor: '#EC6697'
+    }).then((result) => {
+
+      if (result.isConfirmed) {
+
+        if(this._inputNombre == ""){
+          Swal.fire({
+            icon: 'error',
+            title: 'Recuerde ingresar su nombre',
+            showConfirmButton: true,
+            showCloseButton: false,
+            confirmButtonColor: '#EC6697'
+          });
+          return;
+        }
+
+        if(this._inputCelular == ""){
+          Swal.fire({
+            icon: 'error',
+            title: 'Recuerde ingresar su celular',
+            showConfirmButton: true,
+            showCloseButton: false,
+            confirmButtonColor: '#EC6697'
+          });
+          return;
+        }
+
+        if(this._inputCelular.length < 9){
+          Swal.fire({
+            icon: 'error',
+            title: 'El celular debe tener al menos 9 dígitos',
+            showConfirmButton: true,
+            showCloseButton: false,
+            confirmButtonColor: '#EC6697'
+          });
+          return;
+        }
+
+        if(this._inputAsistencia == ""){
+          Swal.fire({
+            icon: 'error',
+            title: 'Recuerde seleccionar si podrá asistir a nuestra boda',
+            showConfirmButton: true,
+            showCloseButton: false,
+            confirmButtonColor: '#EC6697'
+          });
+          return;
+        }
+
+
+
+        const datos = {
+          nombre: this._inputNombre,
+          celular: this._inputCelular,
+          asistencia: this._inputAsistencia,
+          mensaje: this._inputMensaje
+        }
+
+        // Activar estado de loading
+        this.isLoadingForm = true;
+
+        try {
+          this.apiService.registerDataNuevo(datos).subscribe(
+            (response: any) => {
+              // Desactivar estado de loading
+              this.isLoadingForm = false;
+
+              // Mostrar mensaje diferente según la asistencia
+              const mensajeAsistencia = this._inputAsistencia === 'No' 
+                ? 'Esperamos puedas asistir en este día tan especial para nosotros ❤️'
+                : 'Asistencia confirmada, te esperamos el 24 de Octubre ❤️';
+
+              Swal.fire({
+                icon: 'success',
+                title: mensajeAsistencia,
+                showConfirmButton: true,
+                showCloseButton: false,
+                confirmButtonColor: '#EC6697'
+              });
+              
+              this._inputNombre = "";
+              this._inputCelular = "";
+              this._inputAsistencia = "";
+              this._inputMensaje = "";
+            },
+            (error: any) => {
+              // Desactivar estado de loading
+              this.isLoadingForm = false;
+              console.log("error...", error);
+              Swal.fire({
+                icon: 'error',
+                title: 'Error al enviar el mensaje',
+                text: 'Por favor, inténtalo de nuevo',
+                confirmButtonColor: '#EC6697'
+              });
+            }
+          );
+        } catch (error) {
+          // Desactivar estado de loading
+          this.isLoadingForm = false;
+          Swal.fire({
+            icon: 'error',
+            title: 'Error al enviar los datos',
+            text: 'No se pudo procesar la solicitud',
+            confirmButtonColor: '#EC6697'
+          });
+        }
+
+
+      } else if (result.isDenied) {
+        
+      }
+
+    });
+  }
+
+  validateNumber(event: KeyboardEvent): void {
+    const charCode = event.which ? event.which : event.keyCode;
+    if (charCode < 48 || charCode > 57) {
+      event.preventDefault();
+    }
+  }
+
+  validateNombre(event: KeyboardEvent): void {
+    const pattern = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]*$/;
+    const inputChar = String.fromCharCode(event.charCode);
+
+    if (!pattern.test(inputChar)) {
+      // Prevent the default action (character insertion)
+      event.preventDefault();
+    }
   }
 
   scrollTop(){

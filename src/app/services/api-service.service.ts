@@ -68,9 +68,10 @@ export class ApiServiceService {
   }
   
   sendDeseosToGoogleSheets(data: any): Observable<any> {
-    const googleSheetsUrl = 'https://script.google.com/macros/s/AKfycbxn080AcHIYGHp--o1g6AcRey9gkli4_yf0QlHY4TAGNX1q-NNOJdVffUdg4Pfu7lU/exec';
+    const googleSheetsUrl = 'https://script.google.com/macros/s/AKfycbxHau_463-Rd3NhX4Gq2K1wpJziMSCipU-HdOy_1jLM2XWpAQjNaBKYLS8CAeBpKAEp/exec';
     const formData = new FormData();
     formData.append('nombre', data.nombre);
+    formData.append('mensaje', data.mensaje);
 
     // Solo una llamada con fetch y no-cors
     return new Observable(observer => {
@@ -87,6 +88,33 @@ export class ApiServiceService {
         observer.error(new Error('Error al enviar datos. Por favor, inténtalo de nuevo.'));
       });
     });
+  }
+
+  registerDataNuevo(data: any): Observable<any> {
+
+    const googleSheetsUrl = 'https://script.google.com/macros/s/AKfycbzvvn6OjyWS4KrsQaNIRYOhTU5PXQ5elh4c4hN4F_0f2438_ZH8FmpIU0APT1fZaNeN/exec';
+    const formData = new FormData();
+    formData.append('nombre', data.nombre);
+    formData.append('celular', data.celular);
+    formData.append('asistencia', data.asistencia);
+    formData.append('mensaje', data.mensaje);
+
+    // Solo una llamada con fetch y no-cors
+    return new Observable(observer => {
+      fetch(googleSheetsUrl, {
+        method: 'POST',
+        body: formData,
+        mode: 'no-cors'
+      })
+      .then(() => {
+        observer.next({ result: 'success', message: 'Datos enviados' });
+        observer.complete();
+      })
+      .catch(fetchError => {
+        observer.error(new Error('Error al enviar datos. Por favor, inténtalo de nuevo.'));
+      });
+    });
+
   }
 
 

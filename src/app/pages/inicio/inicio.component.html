@@ -226,7 +226,7 @@
         </div>
 
 
-        <div class="row" data-aos="fade-up">
+        <!-- <div class="row" data-aos="fade-up">
             <div class="col-12">
                 <div style="display: flex; justify-content: center;">
                     <img src="../../../assets/img/deseo.png" alt="vestimenta" class="img-fluid mt-4" style="max-width: 100px; width: 100%;">
@@ -247,7 +247,7 @@
                     </a>
                 </div>
             </div>
-        </div>
+        </div> -->
 
     </div>
 
@@ -268,10 +268,44 @@
                 <p class="p-3 pt-0 pb-0 fraunces-t1" style="text-align: center; color: #555;">
                     Tu presencia es muy importante para nosotros, por favor confirmanos tu asistencia hasta el <b>13 de Octubre.</b>
                 </p>
-                <div style="display: flex; justify-content: center;" class="mb-5 mt-4">
-                    <a (click)="openWhatsApp()">
-                        <img src="../../../assets/img/btn-whatsapp.png" alt="btn-click" class="img-fluid" style="max-width: 150px; width: 100%; cursor: pointer;">
-                    </a>
+                <div class="col-12 p-3">
+                    <div class="mb-3">
+                        <label for="idNombre" class="form-label fraunces-t1" style="color: #EC6697; font-size: 20px;"> Nombre del invitado </label>
+                        <input [(ngModel)]="_inputNombre" type="text" class="form-control" placeholder="Ingrese su nombre completo" autocomplete="off" maxlength="40" (keypress)="validateNombre($event)">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="idCelular" class="form-label fraunces-t1" style="color: #EC6697; font-size: 20px;"> Celular </label>
+                        <input [(ngModel)]="_inputCelular" type="text" class="form-control" id="idCelular" placeholder="Ingrese su celular" (keypress)="validateNumber($event)" maxlength="10" autocomplete="off" inputmode="numeric"
+                        pattern="[0-9]*">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="idConfirmacion" class="form-label fraunces-t1" style="color: #EC6697; font-size: 20px;"> Confirmación </label>
+                        <select [(ngModel)]="_inputAsistencia" id="idConfirmacion" class="form-select">
+                            <option value="">--Seleccione--</option>
+                            <option value="Si">Si</option>
+                            <option value="No">No</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="idMensaje" class="form-label fraunces-t1" style="color: #EC6697; font-size: 20px;"> Mensaje para los novios </label>
+                        <textarea [(ngModel)]="_inputMensaje" name="" id="idMensaje" rows="10" style="resize: none; height: 200px; width: 100%;" class="form-control" autocomplete="off" maxlength="150">
+
+                        </textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <button class="btn btn-primary syne-uniquifier" 
+                                [disabled]="isLoadingForm" 
+                                [style.background-color]="isLoadingForm ? '#cccccc' : '#EC6697'"
+                                style="border: none; cursor: pointer; float: right;" 
+                                (click)="confirmar()">
+                            {{ isLoadingForm ? 'Enviando...' : 'Enviar' }} 
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>

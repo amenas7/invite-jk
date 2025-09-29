@@ -267,7 +267,7 @@ export class InicioComponent implements OnInit, OnDestroy, AfterViewInit{
       if (result.isConfirmed && result.value) {
         Swal.fire({
           icon: 'success',
-          title: 'Tu música fue registrada, te esperamos el 27 de Setiembre ❤️',
+          title: 'Tu música fue registrada, te esperamos el 24 de Octubre ❤️',
           showConfirmButton: true,
           showCloseButton: false,
           confirmButtonColor: '#769389'
@@ -279,32 +279,41 @@ export class InicioComponent implements OnInit, OnDestroy, AfterViewInit{
   showDeseosForm() {
     Swal.fire({
       title: "Ingresa el mensaje que quieres enviar a los novios",
-      input: "text",
-      inputAttributes: {
-        autocapitalize: "off",
-        autocomplete: "off",
-        maxlength: "50"
-      },
+      html: `
+        <div style="margin-bottom: 15px;">
+          <label style="display: block; margin-bottom: 5px; font-weight: bold;">Tu nombre:</label>
+          <input id="nombre_autor" type="text" placeholder="Escribe tu nombre" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;" maxlength="50" autocomplete="off">
+        </div>
+        <div>
+          <label style="display: block; margin-bottom: 5px; font-weight: bold;">Tu mensaje:</label>
+          <textarea id="mensaje" placeholder="Escribe tu mensaje para los novios" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; resize: vertical; min-height: 80px;" maxlength="200" autocomplete="off"></textarea>
+        </div>
+      `,
       showCancelButton: true,
       confirmButtonText: "Registrar",
       showLoaderOnConfirm: true,
       cancelButtonText: "Cancelar",
       confirmButtonColor: "#769389",
-      preConfirm: async (nombre_autor) => {
-        if (!nombre_autor || nombre_autor.trim() === "") {
-          Swal.fire({
-            icon: 'error',
-            title: 'Recuerde ingresar un mensaje',
-            showConfirmButton: true,
-            showCloseButton: false,
-            confirmButtonColor: '#769389'
-          });
+      preConfirm: async () => {
+        const nombreAutor = (document.getElementById('nombre_autor') as HTMLInputElement).value.trim();
+        const mensaje = (document.getElementById('mensaje') as HTMLTextAreaElement).value.trim();
+        
+        if (!nombreAutor) {
+          Swal.showValidationMessage('Recuerde ingresar su nombre');
+          return false; 
+        }
+        
+        if (!mensaje) {
+          Swal.showValidationMessage('Recuerde ingresar un mensaje');
           return false; 
         }
   
         try {
-          const _nombre_autor = { nombre: nombre_autor };
-          return this.apiService.sendDeseosToGoogleSheets(_nombre_autor).toPromise();
+          const datos = { 
+            nombre: nombreAutor,
+            mensaje: mensaje
+          };
+          return this.apiService.sendDeseosToGoogleSheets(datos).toPromise();
         } catch (error) {
           Swal.showValidationMessage(`No se pudo guardar los datos`);
           return false;
@@ -315,7 +324,7 @@ export class InicioComponent implements OnInit, OnDestroy, AfterViewInit{
       if (result.isConfirmed && result.value) {
         Swal.fire({
           icon: 'success',
-          title: 'Tu mensaje para los novios fue registrado, te esperamos el 27 de Setiembre ❤️',
+          title: 'Tu mensaje para los novios fue registrado, te esperamos el 24 de Octubre ❤️',
           showConfirmButton: true,
           showCloseButton: false,
           confirmButtonColor: '#769389'
